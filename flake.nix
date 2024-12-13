@@ -1,20 +1,26 @@
 {
-  descriptionb = "A flake for the happy-meow project";
+  description = "A flake for the happy-meow project";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     # happy-meow.url = "github:kprinssu/happy-meow";
   };
 
-  outputs = { self, nixpkgs }: {
+  outputs = { self, nixpkgs }:
+    let
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+      };
+    in
+    {
+      packages.${pkgs.system} = rec { };
 
-    pkgs = nixpkgs.legacyPackages.${nixpkgs.system};
+      devShells.${pkgs.system}.default = pkgs.mkShell {
+        buildInputs = [ pkgs.coreutils pkgs.bashInteractive pkgs.nodejs_18 pkgs.yarn ];
 
+        shellHook = ''
 
-    devShell = pkgs.mkShell {
-      buildInputs = [
-        pkgs.nodejs16
-      ];
+        '';
+      };
+
     };
-
-  };
 }
